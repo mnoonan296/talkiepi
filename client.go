@@ -12,18 +12,28 @@ import (
 	"time"
 )
 
+var MyLedStrip *LedStrip
+
 func (b *Talkiepi) Init() {
 	b.Config.Attach(gumbleutil.AutoBitrate)
 	b.Config.Attach(b)
 
 	b.initGPIO()
-
+	MyLedStrip, _ = NewLedStrip()
+	fmt.Printf("%v %s\n", MyLedStrip.buf, MyLedStrip.display)
 	b.Connect()
 }
 
 func (b *Talkiepi) CleanUp() {
 	b.Client.Disconnect()
-	b.LEDOffAll()
+	if SeeedStudio {
+		MyLedStrip.ledCtrl(OnlineLED, OffCol)
+		MyLedStrip.ledCtrl(ParticipantsLED, OffCol)
+		MyLedStrip.ledCtrl(TransmitLED, OffCol)
+		MyLedStrip.closePort()
+	} else {
+		b.LEDOffAll()
+	}
 }
 
 func (b *Talkiepi) Connect() {
@@ -87,7 +97,12 @@ func (b *Talkiepi) TransmitStart() {
 	b.IsTransmitting = true
 
 	// turn on our transmit LED
-	b.LEDOn(b.TransmitLED)
+	if SeeedStudio {
+		MyLedStrip.ledCtrl(TransmitLED, TransmitCol)
+	} else {
+		b.LEDOn(b.TransmitLED)
+	}
+
 
 	b.Stream.StartSource()
 }
@@ -99,7 +114,11 @@ func (b *Talkiepi) TransmitStop() {
 
 	b.Stream.StopSource()
 
-	b.LEDOff(b.TransmitLED)
+	if SeeedStudio {
+		MyLedStrip.ledCtrl(TransmitLED, OffCol)
+	} else {
+		b.LEDOff(b.TransmitLED)
+	}
 
 	b.IsTransmitting = false
 }
@@ -111,7 +130,11 @@ func (b *Talkiepi) OnConnect(e *gumble.ConnectEvent) {
 
 	b.IsConnected = true
 	// turn on our online LED
-	b.LEDOn(b.OnlineLED)
+	if SeeedStudio {
+		MyLedStrip.ledCtrl(OnlineLED, OnlineCol)
+	} else {
+		b.LEDOn(b.OnlineLED)
+	}
 
 	fmt.Printf("Connected to %s (%d)\n", b.Client.Conn.RemoteAddr(), b.ConnectAttempts)
 	if e.WelcomeMessage != nil {
@@ -133,9 +156,15 @@ func (b *Talkiepi) OnDisconnect(e *gumble.DisconnectEvent) {
 	b.IsConnected = false
 
 	// turn off our LEDs
-	b.LEDOff(b.OnlineLED)
-	b.LEDOff(b.ParticipantsLED)
-	b.LEDOff(b.TransmitLED)
+	if SeeedStudio {
+		MyLedStrip.ledCtrl(OnlineLED, OffCol)
+		MyLedStrip.ledCtrl(ParticipantsLED, OffCol)
+		MyLedStrip.ledCtrl(TransmitLED, OffCol)
+	} else {
+		b.LEDOff(b.OnlineLED)
+		b.LEDOff(b.ParticipantsLED)
+		b.LEDOff(b.TransmitLED)
+	}
 
 	if reason == "" {
 		fmt.Printf("Connection to %s disconnected, attempting again in 10 seconds...\n", b.Address)
@@ -165,10 +194,19 @@ func (b *Talkiepi) ParticipantLEDUpdate() {
 
 	if participantCount > 1 {
 		fmt.Printf("Channel '%s' has %d participants\n", b.Client.Self.Channel.Name, participantCount)
-		b.LEDOn(b.ParticipantsLED)
+		if SeeedStudio {
+			MyLedStrip.ledCtrl(ParticipantsLED, ParticipantsCol)
+		} else {
+			b.LEDOn(b.ParticipantsLED)
+		}
+
 	} else {
 		fmt.Printf("Channel '%s' has no other participants\n", b.Client.Self.Channel.Name)
-		b.LEDOff(b.ParticipantsLED)
+		if SeeedStudio {
+			MyLedStrip.ledCtrl(ParticipantsLED, OffCol)
+		} else {
+			b.LEDOff(b.ParticipantsLED)
+		}
 	}
 }
 
