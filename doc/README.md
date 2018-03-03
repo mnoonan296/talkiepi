@@ -140,7 +140,8 @@ Edit the ALSA configuration file:
 $nano ~/.asoundrc
 ~~~
 
-Change the two occurrences of "hw:0,0" to "hw:1,0"
+Change the two occurrences of **"hw:0,0"** to **"hw:1,0"**.
+
 Save (CTRL-O) and exit (CTRL-X).
 
 Reboot:
