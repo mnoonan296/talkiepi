@@ -192,8 +192,8 @@ $wget https://storage.googleapis.com/golang/go1.9.3.linux-armv6l.tar.gz
 $sudo tar -C /usr/local -xzf go1.9.3.linux-armv6l.tar.gz
 $mkdir ~/go
 $cd go
-$mkdir ~/src
-$mkdir ~/bin
+$mkdir src
+$mkdir bin
 ~~~
 
 Edit the ~/.profile file with:
