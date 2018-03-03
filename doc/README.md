@@ -102,6 +102,21 @@ Make the follow configuration changes:
 1. Advanced Options > A1 Expand Filesystem > Ok
 1. Finish > Reboot? Yes
 
+## Disable HDMI
+
+To save power the HDMI output can be disabled at boot.
+
+~~~
+$sudo nano /etc/rc.local
+~~~
+
+Add the following lines above exit 0:
+
+~~~
+# Disable HDMI
+/usr/bin/tvservice -o
+~~~
+
 ## Git
 Install Git with this command:
 
