@@ -94,10 +94,10 @@ $sudo raspi-config
 
 Make the follow configuration changes:
 
-1. Change User Password > Ok > *new_password* > *new_password*
-1. Network Options > N1 Hostname > Ok > *new_host_name* > Ok
-1. Localisation Options > I2 Change Timezone > *your_country* > *your_city*
-1. Localisation Options > I4 Change WiFi Country > *your_country_code* > Ok
+1. Change User Password > Ok > YOUR_PASSWORD > YOUR_PASSWORD
+1. Network Options > N1 Hostname > Ok > YOU_HOSTNAME > Ok
+1. Localisation Options > I2 Change Timezone > YOUR_COUNTRY > YOUR_CITY
+1. Localisation Options > I4 Change WiFi Country > YOUR_COUNTRY_CODE > Ok
 1. Interfacing Options > P4 SPI > Yes > Ok
 1. Advanced Options > A1 Expand Filesystem > Ok
 1. Finish > Reboot? Yes
