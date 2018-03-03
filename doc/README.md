@@ -194,6 +194,7 @@ $mkdir ~/go
 $cd go
 $mkdir src
 $mkdir bin
+$cd
 ~~~
 
 Edit the ~/.profile file with:
