@@ -185,7 +185,7 @@ $sudo apt install libopenal-dev libopus-dev
 
 ## Golang
 
-Install go with:
+Install Golang with:
 
 ~~~
 $wget https://storage.googleapis.com/golang/go1.9.3.linux-armv6l.tar.gz
