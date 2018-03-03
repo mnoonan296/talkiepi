@@ -1,108 +1,321 @@
-# Boot to talkiepi
-![assembled1](talkiepi_assembled_1.jpg "Assembled talkiepi 1")
+# TalkiePi Setup Guide
 
-This is a simple overview to scratch install talkiepi on your Raspberry Pi, and have it start on boot. 
-This document assumes that you have raspbian-stretch-lite installed on your SD card, and that the distribution is up to date.
-This document also asumes that you have already configured network/wifi connectivity on your Raspberry Pi.
+Here are the steps required to setup a TalkiePi with a Raspberry Pi Zero W and a SeeedStudio ReSpeaker 2-Mic Pi HAT. These instructions assume you are using a Windows PC to configure the RPi.
 
-By default talkiepi will run without any arguments, it will autogenerate a username and then connect to my mumble server.
+By default TalkiePi will run without any arguments, it will autogenerate a username and then connect to Daniel Chote's mumble server.
 You can change this behavior by appending commandline arguments of `-server YOUR_SERVER_ADDRESS`, `-username YOUR_USERNAME` to the ExecStart line in `/etc/systemd/system/mumble.service` once installed.
 
-talkiepi will also accept arguments for `-password`, `-insecure`, `-certificate` and `-channel`, all defined in `cmd/talkiepi/main.go`, if you run your own mumble server, these will be self explanatory.
+TalkiePi will also accept arguments for `-password`, `-insecure`, `-certificate` and `-channel`, all defined in `cmd/talkiepi/main.go`, if you run your own mumble server, these will be self explanatory.
 
+## Hardware Requirements
+* (1) Raspberry Pi Zero W
+* (1) [SeeedStudio ReSpeaker 2-Mic Pi HAT](http://wiki.seeed.cc/Respeaker_2_Mics_Pi_HAT/)
+* (1) [Stereo speaker (3W, 8Ω) with JST connector](https://core-electronics.com.au/stereo-enclosed-speaker-3w-8.html)
+* (1) MicroSD card, 16GB, class 10 with SD card adapter
+* (1) Power adapter with micro USB cable
+* (4) [M2.5 Brass Standoffs](https://core-electronics.com.au/brass-m2-5-standoffs-for-pi-hats-black-plated-pack-of-2.html)
+* (4) M2.5 x 6 mm screws
 
-## Create a user
+## Install Operating System
 
-As root on your Raspberry Pi (`sudo -i`), create a mumble user:
-```
-adduser --disabled-password --disabled-login --gecos "" mumble
-usermod -a -G cdrom,audio,video,plugdev,users,dialout,dip,input,gpio mumble
-```
+Download the latest version of [Raspbian Lite](https://www.raspberrypi.org/downloads/raspbian/); older versions available [here](http://downloads.raspberrypi.org/raspbian_lite/images/)
 
-## Install
+These instructions have been tested with:
 
-As root on your Raspberry Pi (`sudo -i`), install golang and other required dependencies, then build talkiepi:
-```
-apt-get install golang libopenal-dev libopus-dev git
+~~~
+Based on: Debian Stretch
+Version: November 2017
+Release date: 2017-11-29
+Kernel version: 4.9
+~~~
 
-su mumble
+Write the image to a miroSD card with [Etcher](https://etcher.io/).
 
-mkdir ~/gocode
-mkdir ~/bin
+Create two files on the Boot partition of the microSD card:
 
-export GOPATH=/home/mumble/gocode
-export GOBIN=/home/mumble/bin
+~~~
+wpa_supplicant.conf
+ssh
+~~~
 
-cd $GOPATH
+Below is a template for the wpa_supplicant.conf file. Please edit these details to match one or more wireless networks you intend to use. You can define as many networks as you like, if using only one network please delete the second network definition. Also, the two letter country code should match the country you are operating in.
 
-go get github.com/dchote/gopus
-go get github.com/dchote/talkiepi
+~~~
+country=AU
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
 
-cd $GOPATH/src/github.com/dchote/talkiepi
+network={
+    id_str="descriptive name for network 2"
+    ssid="SSID2"
+    #psk="password2"
+    priority=2
+}
 
-go build -o /home/mumble/bin/talkiepi cmd/talkiepi/main.go 
-```
+network={
+    id_str="descriptive name for network 1"
+    ssid="SSID1"
+    #psk="password1"
+    priority=1
+}
+~~~
 
+Note the file must be formatted with linux style line end characters (i.e. LF not CR LF).
 
-## Start on boot
+The ssh file should be empty.
 
-As root on your Raspberry Pi (`sudo -i`), copy mumble.service in to place:
-```
-cp /home/mumble/gocode/src/github.com/dchote/talkiepi/conf/systemd/mumble.service /etc/systemd/system/mumble.service
+Insert the microSD card into the RPi and apply power. The RPi will boot and attempt to connect one of the WiFi networks defined above with SSH enabled.
 
-systemctl enable mumble.service
-```
+Use [Advanced Port Scanner](https://www.advanced-port-scanner.com/) or your router’s web interface to find the IP address of the RPi.
+
+Use [PuTTY](http://www.putty.org/) to make an SSH connection to the RPi.
+
+The default login credentials are:
+
+~~~
+rappberrypi login: pi
+password: raspberry
+~~~
+
+Update repositories and upgrade software with:
+
+~~~
+$sudo apt update
+$sudo apt upgrade
+~~~
+
+## Raspi-Config
+
+Start the RPi configuration tool with this command:
+
+~~~
+$sudo raspi-config
+~~~
+
+Make the follow configuration changes:
+
+1. Change User Password > Ok > *new_password* > *new_password*
+1. Network Options > N1 Hostname > Ok > *new_host_name* > Ok
+1. Localisation Options > I2 Change Timezone > *your_country* > *your_city*
+1. Localisation Options > I4 Change WiFi Country > *your_country_code* > Ok
+1. Interfacing Options > P4 SPI > Yes > Ok
+1. Advanced Options > A1 Expand Filesystem > Ok
+1. Finish > Reboot? Yes
+
+## Git
+Install Git with this command:
+
+~~~
+$sudo apt install git
+~~~
+
+## SeeedStudio ReSpeaker 2-Mic HAT
+Install drivers with these commands:
+
+~~~
+$git clone https://github.com/respeaker/seeed-voicecard
+$cd seeed-voicecard
+$sudo ./install.sh 2mic
+$cp asound_2mic.conf ~/.asoundrc
+~~~
+
+Edit the ALSA configuration file:
+
+~~~
+$nano ~/.asoundrc
+~~~
+
+Change the two occurrences of "hw:0,0" to "hw:1,0"
+Save (CTRL-O) and exit (CTRL-X).
+
+Reboot:
+
+~~~
+$sudo reboot
+~~~
+
+Test the speaker and mic with:
+
+~~~
+$arecord -f cd | aplay
+~~~
+
+Test speakers with the following command (CTRL-C to quit).
+
+~~~
+$speaker-test
+~~~
+
+Test the microphone with:
+
+~~~
+$arecord test.wav
+$aplay test.wav
+~~~
+
+Audio configuration is done with:
+
+~~~
+$alsamixer
+~~~
+
+## Install Prerequisites
+
+Install prerequisites with:
+~~~
+$sudo apt install libopenal-dev libopus-dev
+~~~
+
+## Golang
+
+Install go with:
+
+~~~
+$wget https://storage.googleapis.com/golang/go1.9.3.linux-armv6l.tar.gz
+$sudo tar -C /usr/local -xzf go1.9.3.linux-armv6l.tar.gz
+$mkdir ~/go
+$cd go
+$mkdir ~/src
+$mkdir ~/bin
+~~~
+
+Edit the ~/.profile file with:
+
+~~~
+$nano ~/.profile
+~~~
+
+Add the following text to the end of the file:
+
+~~~
+export PATH=$PATH:/usr/local/go/bin:~/go/bin
+export GOPATH=$HOME/go
+export GOBIN=$HOME/go/bin
+export PATH=$PATH:$GOPATH/bin
+~~~
+
+Reload the configuration with:
+
+~~~
+$source ~/.profile
+~~~
+
+## Periph.io
+Install Periph.io with:
+
+~~~
+$cd ~/go/src
+$go get periph.io/x/periph/cmd/...
+~~~
+
+## Install TalkiePi
+
+Install TalkiePi with:
+
+~~~
+$cd $GOPATH/src
+$go get github.com/dchote/gopus
+$go get github.com/CustomMachines/talkiepi
+$cd $GOPATH/src/github.com/CustomMachines/talkiepi
+$go build -o $GOPATH/bin/talkiepi cmd/talkiepi/main.go
+~~~
+
+Install workarounds for RPi Zero with:
+
+~~~
+$cd ~/go/src/github.com/CustomMachines/talkiepi/workarounds
+$sudo apt install ./libopenal-dev_1.17.2-4_armhf.deb
+$sudo apt install ./libopenal1_1.17.2-4_armhf.deb
+$sudo apt install ./libopenal-data_1.17.2-4_all.deb
+$sudo apt install ./libopenal1-dbg_1.17.2-4_armhf.deb
+~~~
+
+Copy the service file to the required folder.
+
+~~~
+$sudo cp /home/pi/go/src/github.com/CustomMachines/talkiepi/conf/systemd/mumble.service /etc/systemd/system/mumble.service
+~~~
+
+## Service
+Edit the service file with:
+
+~~~
+$sudo nano /etc/systemd/system/mumble.service
+~~~
+
+Edit the **MUMBLE_SERVER:PORT_NUMBER** to match the one you wish to use. 
+
+Edit the **USERNAME** match the one created above.
+
+~~~
+
+[Unit]
+Description = Mumble Client
+Requires = systemd-user-sessions.service network.target sound.target
+After = multi-user.target
+
+[Service]
+User = pi
+Group = pi
+Type = simple
+ExecStart = /home/pi/go/bin/talkiepi -server MUMBLE_SERVER:PORT_NUMBER -username USERNAME -certificate /home/pi$
+Restart = always
+RestartSec = 5
+
+[Install]
+WantedBy = multi-user.target
+
+~~~
+
+Enable the service with:
+
+~~~
+$sudo systemctl enable mumble.service
+~~~
+
+To run TalkiePi from the command line first stop the service:
+
+~~~
+$sudo systemctl stop mumble.service
+~~~
+
+Then run:
+
+~~~
+To run TalkiePi:
+$./bin/talkiepi -server MUMBLE_SERVER:PORT_NUMBER -username USERNAME -certificate /home/pi/mumble.pem -channel Root
+
+~~~
 
 ## Create a certificate
 
-This is optional, mainly if you want to register your talkiepi against a mumble server and apply ACLs.
-```
-su mumble
-cd ~
+~~~
 
-openssl genrsa -aes256 -out key.pem
-```
+$cd
+$openssl genrsa -aes256 -out key.pem
+~~~
 
 Enter a simple passphrase, its ok, we will remove it shortly...
 
-```
-openssl req -new -x509 -key key.pem -out cert.pem -days 1095
-```
+~~~
+$openssl req -new -x509 -key key.pem -out cert.pem -days 1095
+~~~
 
 Enter your passphrase again, and fill out the certificate info as much as you like, its not really that important if you're just hacking around with this.
 
-```
-openssl rsa -in key.pem -out nopasskey.pem
-```
+~~~
+$openssl rsa -in key.pem -out nopasskey.pem
+~~~
 
 Enter your password for the last time.
 
-```
-cat nopasskey.pem cert.pem > mumble.pem
-```
+~~~
+$cat nopasskey.pem cert.pem > mumble.pem
+~~~
 
-Now as root again (`sudo -i`), edit `/etc/systemd/system/mumble.service` appending `-username USERNAME_TO_REGISTER -certificate /home/mumble/mumble.pem` at the end of `ExecStart = /home/mumble/bin/talkiepi`
+Run:
 
-Run `systemctl daemon-reload` and then `service mumble restart` and you should be set with a tls certificate!
-
-
-## Use your USB speakerphone
-
-If you are using a USB speakerphone such as the US Robotics one that I am using, you will need to change the default system sound device.
-As root on your Raspberry Pi (`sudo -i`), find your device by running `aplay -l`, take note of the index of the device (likely 1) and then edit the alsa config (`/usr/share/alsa/alsa.conf`), changing the following:
-```
-defaults.ctl.card 1
-defaults.pcm.card 1
-```
-_1 being the index of your device_
-
-
-If your speakerphone is too quiet, you can adjust the volume using amixer as such:
-```
-amixer -c 1 set Headphone 60%
-```
-_1 being the index of your device_
-
-
-## Pi Zero Fixes
-I have compiled libopenal without ARM NEON support so that it works on the Pi Zero. The packages can be found in the [workarounds](/workarounds/). directory of this repo, install the libopenal1 package over your existing libopenal install.
+~~~
+$sudo systemctl daemon-reload
+$sudo systemctl restart mumble.service
+~~~
