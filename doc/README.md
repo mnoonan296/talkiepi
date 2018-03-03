@@ -222,7 +222,7 @@ $source ~/.profile
 Install Periph.io with:
 
 ~~~
-$cd ~/go/src
+$cd $GOPATH/src
 $go get periph.io/x/periph/cmd/...
 ~~~
 
