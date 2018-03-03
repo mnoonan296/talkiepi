@@ -167,6 +167,7 @@ Test the microphone with:
 ~~~
 $arecord test.wav
 $aplay test.wav
+$rm test.wav
 ~~~
 
 Audio configuration is done with:
