@@ -226,6 +226,32 @@ $cd $GOPATH/src
 $go get periph.io/x/periph/cmd/...
 ~~~
 
+## Create a certificate
+
+~~~
+
+$cd
+$openssl genrsa -aes256 -out key.pem
+~~~
+
+Enter a simple passphrase, its ok, we will remove it shortly...
+
+~~~
+$openssl req -new -x509 -key key.pem -out cert.pem -days 1095
+~~~
+
+Enter your passphrase again, and fill out the certificate info as much as you like. The only field that is important is the "Common Name" field as this isused to identify you on the Mumble server.
+
+~~~
+$openssl rsa -in key.pem -out nopasskey.pem
+~~~
+
+Enter your password for the last time.
+
+~~~
+$cat nopasskey.pem cert.pem > mumble.pem
+~~~
+
 ## Install TalkiePi
 
 Install TalkiePi with:
@@ -303,32 +329,6 @@ Then run:
 To run TalkiePi:
 $./bin/talkiepi -server MUMBLE_SERVER:PORT_NUMBER -username USERNAME -certificate /home/pi/mumble.pem -channel Root
 
-~~~
-
-## Create a certificate
-
-~~~
-
-$cd
-$openssl genrsa -aes256 -out key.pem
-~~~
-
-Enter a simple passphrase, its ok, we will remove it shortly...
-
-~~~
-$openssl req -new -x509 -key key.pem -out cert.pem -days 1095
-~~~
-
-Enter your passphrase again, and fill out the certificate info as much as you like, its not really that important if you're just hacking around with this.
-
-~~~
-$openssl rsa -in key.pem -out nopasskey.pem
-~~~
-
-Enter your password for the last time.
-
-~~~
-$cat nopasskey.pem cert.pem > mumble.pem
 ~~~
 
 Run:
