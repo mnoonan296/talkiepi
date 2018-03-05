@@ -260,8 +260,7 @@ Install TalkiePi with:
 $cd $GOPATH/src
 $go get github.com/dchote/gopus
 $go get github.com/CustomMachines/talkiepi
-$cd $GOPATH/src/github.com/CustomMachines/talkiepi
-$go build -o $GOPATH/bin/talkiepi cmd/talkiepi/main.go
+$go build -o $GOPATH/bin/talkiepi $GOPATH/src/github.com/CustomMachines/talkiepi/cmd/talkiepi/main.go
 ~~~
 
 Install workarounds for RPi Zero with:
