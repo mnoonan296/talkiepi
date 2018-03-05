@@ -226,6 +226,27 @@ $cd $GOPATH/src
 $go get periph.io/x/periph/cmd/...
 ~~~
 
+## Install TalkiePi
+
+Install TalkiePi with:
+
+~~~
+$cd $GOPATH/src
+$go get github.com/dchote/gopus
+$go get github.com/CustomMachines/talkiepi
+$go build -o $GOPATH/bin/talkiepi $GOPATH/src/github.com/CustomMachines/talkiepi/cmd/talkiepi/main.go
+~~~
+
+Install workarounds for RPi Zero with:
+
+~~~
+$cd ~/go/src/github.com/CustomMachines/talkiepi/workarounds
+$sudo apt install ./libopenal-dev_1.17.2-4_armhf.deb
+$sudo apt install ./libopenal1_1.17.2-4_armhf.deb
+$sudo apt install ./libopenal-data_1.17.2-4_all.deb
+$sudo apt install ./libopenal1-dbg_1.17.2-4_armhf.deb
+~~~
+
 ## Create a certificate
 
 ~~~
@@ -252,26 +273,7 @@ Enter your password for the last time.
 $cat nopasskey.pem cert.pem > mumble.pem
 ~~~
 
-## Install TalkiePi
-
-Install TalkiePi with:
-
-~~~
-$cd $GOPATH/src
-$go get github.com/dchote/gopus
-$go get github.com/CustomMachines/talkiepi
-$go build -o $GOPATH/bin/talkiepi $GOPATH/src/github.com/CustomMachines/talkiepi/cmd/talkiepi/main.go
-~~~
-
-Install workarounds for RPi Zero with:
-
-~~~
-$cd ~/go/src/github.com/CustomMachines/talkiepi/workarounds
-$sudo apt install ./libopenal-dev_1.17.2-4_armhf.deb
-$sudo apt install ./libopenal1_1.17.2-4_armhf.deb
-$sudo apt install ./libopenal-data_1.17.2-4_all.deb
-$sudo apt install ./libopenal1-dbg_1.17.2-4_armhf.deb
-~~~
+## Systemd Service
 
 Copy the service file to the required folder.
 
@@ -279,7 +281,6 @@ Copy the service file to the required folder.
 $sudo cp /home/pi/go/src/github.com/CustomMachines/talkiepi/conf/systemd/mumble.service /etc/systemd/system/mumble.service
 ~~~
 
-## Service
 Edit the service file with:
 
 ~~~
