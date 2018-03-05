@@ -1,14 +1,14 @@
 [Unit]
-Description = Mumble Client  
+Description = Mumble Client
 Requires = systemd-user-sessions.service network.target sound.target
 After = multi-user.target
 
 [Service]
-User = mumble  
-Group = mumble  
-Type = simple  
-ExecStart = /home/mumble/bin/talkiepi
-Restart = always 
+User = pi
+Group = pi
+Type = simple
+ExecStart = /home/pi/go/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
+Restart = always
 RestartSec = 5
 
 [Install]
