@@ -247,10 +247,9 @@ $sudo apt install ./libopenal-data_1.17.2-4_all.deb
 $sudo apt install ./libopenal1-dbg_1.17.2-4_armhf.deb
 ~~~
 
-## Create a certificate
+## Create a Certificate
 
 ~~~
-
 $cd
 $openssl genrsa -aes256 -out key.pem
 ~~~
