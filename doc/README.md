@@ -310,24 +310,28 @@ WantedBy = multi-user.target
 
 ~~~
 
-Enable the service with:
+Test the TalkiePi application with:
+
+~~~
+$GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
+~~~
+
+If all is well the Systemd service can be enabled with:
 
 ~~~
 $sudo systemctl enable mumble.service
 ~~~
 
-To run TalkiePi from the command line first stop the service:
+To stop the service:
 
 ~~~
 $sudo systemctl stop mumble.service
 ~~~
 
-Then run:
+To disabled the service:
 
 ~~~
-To run TalkiePi:
-$./bin/talkiepi -server MUMBLE_SERVER:PORT_NUMBER -username USERNAME -certificate /home/pi/mumble.pem -channel Root
-
+$sudo systemctl disable mumble.service
 ~~~
 
 Run:
