@@ -316,25 +316,15 @@ Test the TalkiePi application with:
 $GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
 ~~~
 
+To quit the application press (CTRL+C).
+
 If all is well the Systemd service can be enabled with:
 
 ~~~
 $sudo systemctl enable mumble.service
 ~~~
 
-To stop the service:
-
-~~~
-$sudo systemctl stop mumble.service
-~~~
-
-To disabled the service:
-
-~~~
-$sudo systemctl disable mumble.service
-~~~
-
-Run:
+To start the service without rebooting run:
 
 ~~~
 $sudo systemctl daemon-reload
