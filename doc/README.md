@@ -287,9 +287,9 @@ Edit the service file with:
 $sudo nano /etc/systemd/system/mumble.service
 ~~~
 
-Edit the **MUMBLE_SERVER:PORT_NUMBER** to match the one you wish to use. 
+Edit the **YOUR_SERVER:PORT** to match the one you wish to use. 
 
-Edit the **USERNAME** match the one created above.
+Edit the **YOUR_USERNAME** match the one created above.
 
 ~~~
 
@@ -302,7 +302,7 @@ After = multi-user.target
 User = pi
 Group = pi
 Type = simple
-ExecStart = /home/pi/go/bin/talkiepi -server MUMBLE_SERVER:PORT_NUMBER -username USERNAME -certificate /home/pi$
+ExecStart = /home/pi/go/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
 Restart = always
 RestartSec = 5
 
