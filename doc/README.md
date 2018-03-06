@@ -260,7 +260,7 @@ Enter a simple passphrase, its ok, we will remove it shortly...
 $openssl req -new -x509 -key key.pem -out cert.pem -days 1095
 ~~~
 
-Enter your passphrase again, and fill out the certificate info as much as you like. The only field that is important is the "Common Name" field as this isused to identify you on the Mumble server.
+Enter your passphrase again, and fill out the certificate info as much as you like, its not really that important if you're just hacking around with this.
 
 ~~~
 $openssl rsa -in key.pem -out nopasskey.pem
