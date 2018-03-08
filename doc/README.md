@@ -131,12 +131,12 @@ Install drivers with these commands:
 $git clone https://github.com/respeaker/seeed-voicecard
 $cd seeed-voicecard
 $sudo ./install.sh 2mic
+~~~
+
+Edit the ALSA configuration:
+
+~~~
 $cp asound_2mic.conf ~/.asoundrc
-~~~
-
-Edit the ALSA configuration file:
-
-~~~
 $nano ~/.asoundrc
 ~~~
 
