@@ -48,14 +48,14 @@ update_config=1
 network={
     id_str="descriptive name for network 2"
     ssid="SSID2"
-    #psk="password2"
+    psk="password2"
     priority=2
 }
 
 network={
     id_str="descriptive name for network 1"
     ssid="SSID1"
-    #psk="password1"
+    psk="password1"
     priority=1
 }
 ~~~
