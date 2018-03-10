@@ -221,20 +221,13 @@ Reload the configuration with:
 $source ~/.profile
 ~~~
 
-## Periph.io
-Install Periph.io with:
-
-~~~
-$cd $GOPATH/src
-$go get periph.io/x/periph/cmd/...
-~~~
-
 ## Install TalkiePi
 
 Install TalkiePi with:
 
 ~~~
 $cd $GOPATH/src
+$go get periph.io/x/periph/cmd/...
 $go get github.com/dchote/gopus
 $go get github.com/CustomMachines/talkiepi
 $go build -o $GOPATH/bin/talkiepi $GOPATH/src/github.com/CustomMachines/talkiepi/cmd/talkiepi/main.go
