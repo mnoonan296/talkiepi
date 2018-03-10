@@ -137,6 +137,7 @@ Edit the ALSA configuration:
 
 ~~~
 $cp asound_2mic.conf ~/.asoundrc
+$cd
 $nano ~/.asoundrc
 ~~~
 
@@ -149,6 +150,8 @@ Reboot:
 ~~~
 $sudo reboot
 ~~~
+
+### Optional Audio Tests
 
 Test the speaker and mic with:
 
