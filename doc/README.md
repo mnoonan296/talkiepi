@@ -273,6 +273,7 @@ $cat nopasskey.pem cert.pem > mumble.pem
 Copy the service file to the required folder.
 
 ~~~
+$cd
 $sudo cp /home/pi/go/src/github.com/CustomMachines/talkiepi/conf/systemd/mumble.service /etc/systemd/system/mumble.service
 ~~~
 
