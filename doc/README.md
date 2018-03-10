@@ -245,6 +245,8 @@ $sudo apt install ./libopenal1-dbg_1.17.2-4_armhf.deb
 
 ## Create a Certificate
 
+This is optional, mainly if you want to register your talkiepi against a mumble server and apply ACLs.
+
 ~~~
 $cd
 $openssl genrsa -aes256 -out key.pem
