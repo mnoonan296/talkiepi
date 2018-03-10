@@ -310,7 +310,7 @@ WantedBy = multi-user.target
 Test the TalkiePi application with:
 
 ~~~
-$GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
+$$GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
 ~~~
 
 To quit the application press (CTRL+C).
