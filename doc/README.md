@@ -29,9 +29,9 @@ Release date: 2017-11-29
 Kernel version: 4.9
 ~~~
 
-Write the image to a miroSD card with [Etcher](https://etcher.io/).
+Write the image to a miroSD card with [Etcher](https://etcher.io/). Note, after the write is complete Windows will complain that the microSD card needs to be formatted. This message can be ignored. It is just that Windows cannot read the Linux partitions, but Windows can read the **Boot** partition which is the only one we need access to. 
 
-Create two files on the Boot partition of the microSD card:
+Create two files on the **Boot** partition of the microSD card:
 
 ~~~
 wpa_supplicant.conf
