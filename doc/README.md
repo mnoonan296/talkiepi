@@ -40,6 +40,8 @@ ssh
 
 Below is a template for the wpa_supplicant.conf file. Please edit these details to match one or more wireless networks you intend to use. You can define as many networks as you like, if using only one network please delete the second network definition. Also, the two letter country code should match the country you are operating in.
 
+Note, the file must be formatted with Unix style line end characters (i.e. LF not CR LF). [Notepad++](https://notepad-plus-plus.org/) is an example of a Windows based text editor that supports this.
+
 ~~~
 country=AU
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -59,8 +61,6 @@ network={
     priority=1
 }
 ~~~
-
-Note the file must be formatted with linux style line end characters (i.e. LF not CR LF).
 
 The ssh file should be empty.
 
