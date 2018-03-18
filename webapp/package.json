@@ -1,0 +1,28 @@
+{
+  "name": "config-api",
+  "version": "1.0.0",
+  "description": "A lightweight API to persist applicaiton configuration to the file system",
+  "main": "server.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CustomMachines/talkiepi.git"
+  },
+  "keywords": [
+    "talkiepi",
+    "node.js"
+  ],
+  "author": "Ben Jerrim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CustomMachines/talkiepi/issues"
+  },
+  "homepage": "https://github.com/CustomMachines/talkiepi#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "jsonfile": "^4.0.0"
+  }
+}
