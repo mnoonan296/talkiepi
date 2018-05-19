@@ -13,7 +13,7 @@ The hardware is based around a Raspberry Pi Zero and SeeedStudio ReSpeaker 2-mic
 
 ## 3D printable enclosure
 
-The stl geometry will soon be made availble in the stl directory.
+The case was designed by Paul from [Print Very Good](https://printverygood.vangaans.com/). The stl geometry will soon be made availble in the stl directory.
 
 
 ## Installing talkiepi
