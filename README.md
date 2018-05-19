@@ -1,6 +1,5 @@
 # talkiepi
-![assembled1](doc/talkiepi_assembled_1.jpg "Assembled talkiepi 1")
-![assembled2](doc/talkiepi_assembled_2.jpg "Assembled talkiepi 2")
+![assembled](doc/_DSF9664.jpg "Talkiepi assembled")
 
 talkiepi is a headless capable Mumble client written in Go, written for walkie talkie style use on the Pi using GPIO pins for push to talk and LED status.  It is a fork of [barnard](https://github.com/layeh/barnard), which was a great jump off point for me to learn golang and have something that worked relatively quickly.
 
