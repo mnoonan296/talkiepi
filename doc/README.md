@@ -11,7 +11,7 @@ TalkiePi will also accept arguments for `-password`, `-insecure`, `-certificate`
 
 ## Hardware Requirements
 * (1) Raspberry Pi Zero W
-* (1) [SeeedStudio ReSpeaker 2-Mic Pi HAT](http://wiki.seeed.cc/Respeaker_2_Mics_Pi_HAT/)
+* (1) [SeeedStudio ReSpeaker 2-Mic Pi HAT](http://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/)
 * (1) [Stereo speaker (3W, 8Ω) with JST connector](https://core-electronics.com.au/stereo-enclosed-speaker-3w-8.html)
 * (1) MicroSD card, 16GB, class 10 with SD card adapter
 * (1) Power adapter with micro USB cable
