@@ -2,7 +2,7 @@
 
 Here are the steps required to setup a TalkiePi with a Raspberry Pi Zero W and SeeedStudio ReSpeaker 2-Mic Pi HAT. These instructions assume you are using a Windows PC to configure the RPi.
 
-![assembled1](doc/_DSF9672.jpg "Assembled talkiepi 1")
+![Talkiepi internals](_DSF9672.jpg "Talkiepi internals")
 
 By default TalkiePi will run without any arguments, it will autogenerate a username and then connect to Daniel Chote's mumble server.
 You can change this behavior by appending commandline arguments of `-server YOUR_SERVER_ADDRESS`, `-username YOUR_USERNAME` to the ExecStart line in `/etc/systemd/system/mumble.service` once installed.
