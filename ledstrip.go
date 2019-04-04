@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"periph.io/x/periph/conn/physic"
 	"periph.io/x/periph/conn/spi"
 	"periph.io/x/periph/conn/spi/spireg"
 	"periph.io/x/periph/devices/apa102"
@@ -31,7 +32,8 @@ func NewLedStrip() (*LedStrip, error) {
 	var spiID string = "SPI0.0" //SPI port to use
 	var intensity uint8 = 16 //light intensity [1-255]
 	var temperature uint16 = 5000 //light temperature in °Kelvin [3500-7500]
-	var hz int = 0 //SPI port speed
+	var hz physic.Frequency //SPI port speed
+	var globalPWM bool = false
 
 	if _, err := host.Init(); err != nil {
 		return nil, err
@@ -44,14 +46,19 @@ func NewLedStrip() (*LedStrip, error) {
 	}
 	//Set port speed
 	if hz != 0 {
-		if err := s.LimitSpeed(int64(hz)); err != nil {
+		if err := s.LimitSpeed(hz); err != nil {
 			return nil, err
 		}
 	}
 	if p, ok := s.(spi.Pins); ok {
 		fmt.Printf("Using pins CLK: %s  MOSI: %s  MISO: %s", p.CLK(), p.MOSI(), p.MISO())
 	}
-	display, err := apa102.New(s, numLEDs, intensity, temperature)
+	o := apa102.DefaultOpts
+	o.NumPixels = numLEDs
+	o.Intensity = intensity
+	o.Temperature = temperature
+	o.DisableGlobalPWM = globalPWM
+	display, err := apa102.New(s, &o)
 	if err != nil {
 		return nil, err
 	}
