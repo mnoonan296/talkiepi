@@ -4,10 +4,10 @@ Here are the steps required to setup a TalkiePi with a Raspberry Pi Zero W and S
 
 ![Talkiepi internals](_DSF9672.jpg "Talkiepi internals")
 
-By default TalkiePi will run without any arguments, it will autogenerate a username and then connect to Daniel Chote's mumble server.
-You can change this behavior by appending commandline arguments of `-server YOUR_SERVER_ADDRESS`, `-username YOUR_USERNAME` to the ExecStart line in `/etc/systemd/system/mumble.service` once installed.
+By default, TalkiePi will run without any arguments, it will autogenerate a username and then connect to Daniel Chote's mumble server.
+You can change this behavior by appending command line arguments of `-server YOUR_SERVER_ADDRESS`, `-username YOUR_USERNAME` to the ExecStart line in `/etc/systemd/system/mumble.service` once installed.
 
-TalkiePi will also accept arguments for `-password`, `-insecure`, `-certificate` and `-channel`, all defined in `cmd/talkiepi/main.go`, if you run your own mumble server, these will be self explanatory.
+TalkiePi will also accept arguments for `-password`, `-insecure`, `-certificate` and `-channel`, all defined in `cmd/talkiepi/main.go`, if you run your own mumble server, these will be self-explanatory.
 
 ## Hardware Requirements
 * (1) Raspberry Pi Zero W
@@ -25,10 +25,10 @@ Download the latest version of [Raspbian Lite](https://www.raspberrypi.org/downl
 These instructions have been tested with:
 
 ~~~
-Based on: Debian Stretch
-Version: November 2017
-Release date: 2017-11-29
-Kernel version: 4.9
+Based on: Debian Stretch Lite
+Version: November 2018
+Release date: 2018-11-13
+Kernel version: 4.14
 ~~~
 
 Write the image to a miroSD card with [Etcher](https://etcher.io/). Note, after the write is complete Windows will complain that the microSD card needs to be formatted. This message can be ignored. It is just that Windows cannot read the Linux partitions, but Windows can read the **Boot** partition which is the only one we need access to. 
@@ -40,19 +40,20 @@ wpa_supplicant.conf
 ssh
 ~~~
 
-Below is a template for the wpa_supplicant.conf file. Please edit these details to match one or more wireless networks you intend to use. You can define as many networks as you like, if using only one network please delete the second network definition. Also, the two letter country code should match the country you are operating in.
+Below is a template for the wpa_supplicant.conf file. Please edit these details to match one or more wireless networks you intend to use. You can define as many networks as you like, if using only one network please delete the second network definition. Also, the two-letter country code should match the country you are operating in.
 
 Note, the file must be formatted with Unix style line end characters (i.e. LF not CR LF). [Notepad++](https://notepad-plus-plus.org/) is an example of a Windows based text editor that supports this.
 
 ~~~
-country=AU
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
+country=AU
 
 network={
     id_str="descriptive name for network 2"
     ssid="SSID2"
     psk="password2"
+    key_mgmt=WPA-PSK
     priority=2
 }
 
@@ -60,6 +61,7 @@ network={
     id_str="descriptive name for network 1"
     ssid="SSID1"
     psk="password1"
+    key_mgmt=WPA-PSK
     priority=1
 }
 ~~~
@@ -75,7 +77,7 @@ Use [PuTTY](http://www.putty.org/) to make an SSH connection to the RPi.
 The default login credentials are:
 
 ~~~
-rappberrypi login: pi
+raspberrypi login: pi
 password: raspberry
 ~~~
 
@@ -127,10 +129,14 @@ $sudo apt install git
 ~~~
 
 ## SeeedStudio ReSpeaker 2-Mic HAT
+I was not able to get TalkiePi to work with the latest version (3.1) of seeed-voicecard. If anybody has a solution to this please let me know. In the meantime, we need to install an older version. 
+
 Install drivers with these commands:
 
 ~~~
-$git clone https://github.com/respeaker/seeed-voicecard
+$wget https://github.com/respeaker/seeed-voicecard/archive/v3.0.tar.gz
+$tar -xvzf v3.0.tar.gz
+$mv seeed-voicecard-3.0 seeed-voicecard
 $cd seeed-voicecard
 $sudo ./install.sh 2mic
 ~~~
@@ -144,6 +150,44 @@ $nano ~/.asoundrc
 ~~~
 
 Change the two occurrences of **"hw:0,0"** to **"hw:1,0"**.
+
+The edited file should look like this.
+~~~
+# The IPC key of dmix or dsnoop plugin must be unique
+# If 555555 or 666666 is used by other processes, use another one
+
+pcm.!default {
+    type asym
+    playback.pcm "playback"
+    capture.pcm "capture"
+}
+
+pcm.playback {
+    type plug
+    slave.pcm "dmixed"
+}
+
+pcm.capture {
+    type plug
+    slave.pcm "array"
+}
+
+pcm.dmixed {
+    type dmix
+    slave.pcm "hw:1,0"
+    ipc_key 555555 
+}
+
+pcm.array {
+    type dsnoop
+    slave {
+        pcm "hw:1,0"
+        channels 2
+    }
+    ipc_key 666666
+}
+
+~~~
 
 Save (CTRL-O) and exit (CTRL-X).
 
@@ -185,16 +229,15 @@ $alsamixer
 
 Install prerequisites with:
 ~~~
-$sudo apt install libopenal-dev libopus-dev
+$sudo apt install libopenal-dev libopus-dev golang
 ~~~
 
 ## Golang
 
-Install Golang with:
+Setup Golang with:
 
 ~~~
-$wget https://storage.googleapis.com/golang/go1.9.3.linux-armv6l.tar.gz
-$sudo tar -C /usr/local -xzf go1.9.3.linux-armv6l.tar.gz
+$cd
 $mkdir ~/go
 $cd go
 $mkdir src
@@ -211,7 +254,6 @@ $nano ~/.profile
 Add the following text to the end of the file:
 
 ~~~
-export PATH=$PATH:/usr/local/go/bin:~/go/bin
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin
 export PATH=$PATH:$GOPATH/bin
@@ -274,7 +316,14 @@ $cat nopasskey.pem cert.pem > mumble.pem
 
 ## Systemd Service
 
-Copy the service file to the required folder.
+First test the TalkiePi application with the following command, replacing **YOUR_SERVER:PORT** and **YOUR_USERNAME** with your Mumble server credentials:
+~~~
+$$GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
+~~~
+
+To quit the application press (CTRL+C).
+
+If all is well the Systemd service can be created. Copy the service file to the required folder.
 
 ~~~
 $cd
@@ -287,9 +336,7 @@ Edit the service file with:
 $sudo nano /etc/systemd/system/mumble.service
 ~~~
 
-Edit the **YOUR_SERVER:PORT** to match the one you wish to use. 
-
-Edit the **YOUR_USERNAME** match the one created above.
+Replace **YOUR_SERVER:PORT** and **YOUR_USERNAME** with your Mumble server credentials.
 
 ~~~
 
@@ -311,15 +358,7 @@ WantedBy = multi-user.target
 
 ~~~
 
-Test the TalkiePi application with:
-
-~~~
-$$GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certificate /home/pi/mumble.pem -channel Root
-~~~
-
-To quit the application press (CTRL+C).
-
-If all is well the Systemd service can be enabled with:
+Enable the Systemd service with:
 
 ~~~
 $sudo systemctl enable mumble.service
