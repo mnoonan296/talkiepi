@@ -234,6 +234,12 @@ $sudo apt install libopenal-dev libopus-dev golang
 
 ## Golang
 
+You can check you Golang version with:
+~~~
+$go version
+go version go1.7.4 linux/arm
+~~~
+
 Setup Golang with:
 
 ~~~
