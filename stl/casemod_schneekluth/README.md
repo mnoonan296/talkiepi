@@ -14,7 +14,7 @@ I've changed as little as possible because Paul's design is already perfect. Wha
 * more space for the USB and SD-card 
 
 ### Wall Mount
-I've also created two versions of a wall mount. It's just a simple case with a cutout in the bottom to leave room for cable and microphone. Version one is called **tape** because you have to tape it to a wall e.g. with double-sided adhesive tape or velcro tape. Version two is called **screw** because it has some mounting points attached to the side.
+I've also created two versions of a wall mount. It's just a simple case with a cutout in the bottom to leave room for cable and microphone. Version one is called ![**tape**](wallmount/Taped_Edition/talkiepi_wallmount_tape.stl) because you have to tape it to a wall e.g. with double-sided adhesive tape or velcro tape. Version two is called ![**screw**](wallmount/Screwed_Edition/talkiepi_wallmount_screw.stl) because it has some mounting points attached to the side.
 ![Wallmount](pictures/wallmount_small.jpg "Wall mounted Talkiepi")
 ![Holder](pictures/holderandtalkiepi.jpg "Talkiepi + Wallmount")
 
