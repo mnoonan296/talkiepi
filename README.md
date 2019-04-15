@@ -15,6 +15,8 @@ The hardware is based around a Raspberry Pi Zero and SeeedStudio ReSpeaker 2-mic
 
 The case was designed by Paul Van Gaans - [PrintVeryGood.com](https://printverygood.vangaans.com/). The geometry files are available in the stl directory.
 
+## 3D wall mouont
+A wall mount adapter was designed by [@schneekluth](https://github.com/schneekluth). Instructions and files can be found [here](stl/casemod_schneekluth).
 
 ## Installing talkiepi
 
