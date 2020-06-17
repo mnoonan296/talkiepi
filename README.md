@@ -1,3 +1,6 @@
+# NOTE
+This project is no longer maintained. It was archieved 17 June 2020.
+
 # talkiepi
 ![assembled](doc/_DSF9664.jpg "Talkiepi assembled")
 
