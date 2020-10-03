@@ -20,16 +20,7 @@ TalkiePi will also accept arguments for `-password`, `-insecure`, `-certificate`
 
 ## Install Operating System
 
-Download the latest version of [Raspbian Lite](https://www.raspberrypi.org/downloads/raspbian/); older versions available [here](http://downloads.raspberrypi.org/raspbian_lite/images/)
-
-These instructions have been tested with:
-
-~~~
-Based on: Debian Stretch Lite
-Version: November 2018
-Release date: 2018-11-13
-Kernel version: 4.14
-~~~
+Download the Stretch version of [Raspbian Lite](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2019-04-09/) - Talkiepi doesn't work with more recent versions.
 
 Write the image to a miroSD card with [Etcher](https://etcher.io/). Note, after the write is complete Windows will complain that the microSD card needs to be formatted. This message can be ignored. It is just that Windows cannot read the Linux partitions, but Windows can read the **Boot** partition which is the only one we need access to. 
 
@@ -129,16 +120,28 @@ $sudo apt install git
 ~~~
 
 ## SeeedStudio ReSpeaker 2-Mic HAT
-I was not able to get TalkiePi to work with the latest version (3.1) of seeed-voicecard. If anybody has a solution to this please let me know. In the meantime, we need to install an older version. 
-
-Install drivers with these commands:
+Install the latest version of seeed-voicecard:
 
 ~~~
-$wget https://github.com/respeaker/seeed-voicecard/archive/v3.0.tar.gz
-$tar -xvzf v3.0.tar.gz
-$mv seeed-voicecard-3.0 seeed-voicecard
-$cd seeed-voicecard
-$sudo ./install.sh 2mic
+git clone https://github.com/respeaker/seeed-voicecard.git
+cd seeed-voicecard
+sudo ./install.sh  --compat-kernel
+~~~
+
+If the install fails due to insufficient space in the boot folder, temporarily create some space by moving kernel7.img to the tmp folder.  No need to move it back because by the time the install has finished it magically re-appears.
+
+~~~
+sudo mv /boot/kernel7.img /tmp/
+~~~
+
+The following is not essential but cleans things up when you list the sound devices with the "aplay -l" command. Disable pi's on board sound. :
+
+~~~
+sudo nano /etc/modprobe.d/blacklist-alsa.conf
+~~~
+In this blank file enter the following line:
+~~~
+blacklist snd_bcm2835
 ~~~
 
 Edit the ALSA configuration:
@@ -149,7 +152,7 @@ $cd
 $nano ~/.asoundrc
 ~~~
 
-Change the two occurrences of **"hw:0,0"** to **"hw:1,0"**.
+Set the bit rate to 16kHz and period size to at least 960 (which equates to a frame size of 60ms or 960/16) and then buffer size of four times period size or 3840.  Feel free to play around with these numbers but this worked best for me.
 
 The edited file should look like this.
 ~~~
@@ -174,15 +177,23 @@ pcm.capture {
 
 pcm.dmixed {
     type dmix
-    slave.pcm "hw:1,0"
+    slave {
+        pcm "hw:seeed2micvoicec"
+        period_size 960
+        buffer_size 3840
+        rate 16000
+    }
     ipc_key 555555 
 }
 
 pcm.array {
     type dsnoop
     slave {
-        pcm "hw:1,0"
+        pcm "hw:seeed2micvoicec"
         channels 2
+        period_size 960
+        buffer_size 3840
+        rate 16000
     }
     ipc_key 666666
 }
@@ -190,6 +201,12 @@ pcm.array {
 ~~~
 
 Save (CTRL-O) and exit (CTRL-X).
+
+The following will help speed things up a bit when adjusting sample rates:
+
+~~~
+sudo apt-get install haveged
+~~~
 
 Reboot:
 
@@ -229,15 +246,22 @@ $alsamixer
 
 Install prerequisites with:
 ~~~
-$sudo apt install libopenal-dev libopus-dev golang
+$sudo apt install libopenal-dev libopus-dev
 ~~~
 
 ## Golang
 
+Install latest Golang version:
+~~~
+wget https://dl.google.com/go/go1.15.2.linux-armv6l.tar.gz
+sudo tar -C /usr/local -xzf go1.15.2.linux-armv6l.tar.gz
+rm go1.15.2.linux-armv6l.tar.gz
+~~~
+
 You can check you Golang version with:
 ~~~
 $go version
-go version go1.7.4 linux/arm
+go version go1.15.2 linux/arm
 ~~~
 
 Setup Golang with:
@@ -252,21 +276,19 @@ $cd
 ~~~
 
 Edit the ~/.profile file with:
-
 ~~~
 $nano ~/.profile
 ~~~
 
 Add the following text to the end of the file:
-
 ~~~
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin
-export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:/usr/local/go/bin
+
 ~~~
 
 Reload the configuration with:
-
 ~~~
 $source ~/.profile
 ~~~
@@ -287,10 +309,7 @@ The RPi Zero needs libopenal complied without ARM NEON support. These packages c
 
 ~~~
 $cd ~/go/src/github.com/CustomMachines/talkiepi/workarounds
-$sudo apt install ./libopenal-dev_1.17.2-4_armhf.deb
-$sudo apt install ./libopenal1_1.17.2-4_armhf.deb
-$sudo apt install ./libopenal-data_1.17.2-4_all.deb
-$sudo apt install ./libopenal1-dbg_1.17.2-4_armhf.deb
+sudo dpkg -i *.deb
 ~~~
 
 ## Create a Certificate
@@ -375,4 +394,10 @@ To start the service without rebooting run:
 ~~~
 $sudo systemctl daemon-reload
 $sudo systemctl restart mumble.service
+~~~
+
+For debug purposes and while the service is running, this command will let you know what sample rate you are running at:
+
+~~~
+cat /proc/asound/card0/pcm0p/sub0/hw_params
 ~~~
