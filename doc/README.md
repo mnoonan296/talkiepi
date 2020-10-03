@@ -129,13 +129,11 @@ sudo ./install.sh  --compat-kernel
 ~~~
 
 If the install fails due to insufficient space in the boot folder, temporarily create some space by moving kernel7.img to the tmp folder.  No need to move it back because by the time the install has finished it magically re-appears.
-
 ~~~
 sudo mv /boot/kernel7.img /tmp/
 ~~~
 
-The following is not essential but cleans things up when you list the sound devices with the "aplay -l" command. Disable pi's on board sound. :
-
+Disable pi's on board sound. While not essential but cleans things up when you list the sound devices with the "aplay -l" command.
 ~~~
 sudo nano /etc/modprobe.d/blacklist-alsa.conf
 ~~~
@@ -144,8 +142,8 @@ In this blank file enter the following line:
 blacklist snd_bcm2835
 ~~~
 
-Edit the ALSA configuration:
 
+Edit the ALSA configuration:
 ~~~
 $cp asound_2mic.conf ~/.asoundrc
 $cd
@@ -197,7 +195,6 @@ pcm.array {
     }
     ipc_key 666666
 }
-
 ~~~
 
 Save (CTRL-O) and exit (CTRL-X).
@@ -285,7 +282,6 @@ Add the following text to the end of the file:
 export GOPATH=$HOME/go
 export GOBIN=$HOME/go/bin
 export PATH=$PATH:/usr/local/go/bin
-
 ~~~
 
 Reload the configuration with:
@@ -348,6 +344,8 @@ $$GOPATH/bin/talkiepi -server YOUR_SERVER:PORT -username YOUR_USERNAME -certific
 
 To quit the application press (CTRL+C).
 
+IMPORTANT NOTE:  If you are listening to the channel via mumble.com on your PC or Mac, the message received from the Talkiepi will be choppy, however the message sent to the Talkiepi will be clear and fine.  The reason for this is that the Talkiepi has been programmed to transmit at 16kHz sample rate (to fit within the Pizero processing capacity) whereas the online application receives at 48kHz and cannot be changed.  To hear what you are transmitting from a Talkiepi, you need to listen from a second Talkiepi unit.
+
 If all is well the Systemd service can be created. Copy the service file to the required folder.
 
 ~~~
@@ -364,7 +362,6 @@ $sudo nano /etc/systemd/system/mumble.service
 Replace **YOUR_SERVER:PORT** and **YOUR_USERNAME** with your Mumble server credentials.
 
 ~~~
-
 [Unit]
 Description = Mumble Client
 Requires = systemd-user-sessions.service network.target sound.target
@@ -380,24 +377,20 @@ RestartSec = 5
 
 [Install]
 WantedBy = multi-user.target
-
 ~~~
 
 Enable the Systemd service with:
-
 ~~~
 $sudo systemctl enable mumble.service
 ~~~
 
 To start the service without rebooting run:
-
 ~~~
 $sudo systemctl daemon-reload
 $sudo systemctl restart mumble.service
 ~~~
 
 For debug purposes and while the service is running, this command will let you know what sample rate you are running at:
-
 ~~~
 cat /proc/asound/card0/pcm0p/sub0/hw_params
 ~~~
