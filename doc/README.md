@@ -395,7 +395,8 @@ For debug purposes and while the service is running, this command will let you k
 cat /proc/asound/card0/pcm0p/sub0/hw_params
 ~~~
 
-I found the default volume was set to maximum.  To adjust the volume, adjust the playback volume setting through this command:
+
+I found the default volume was set to maximum.  To reduce the volume, lower the playback volume setting through this command:
 ~~~
 alsamixer
 ~~~
