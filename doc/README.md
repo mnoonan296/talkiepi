@@ -390,6 +390,8 @@ $sudo systemctl daemon-reload
 $sudo systemctl restart mumble.service
 ~~~
 
+## Other Adjustments
+
 For debug purposes and while the service is running, this command will let you know what sample rate you are running at:
 ~~~
 cat /proc/asound/card0/pcm0p/sub0/hw_params
